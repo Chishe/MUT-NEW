@@ -27,40 +27,43 @@ export default function MachineStatus({ machine }: Props) {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {Object.entries(status).map(([key, value]) => (
-        <Card
-          key={key}
-          className={`transition-all duration-300 hover:scale-[1.02] ${
-            value
-              ? "border-green-500 shadow-green-200"
-              : "border-muted"
-          }`}
-        >
-          <CardContent className="p-4 flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{key}</span>
+      {Object.entries(status)
+        // 🔥 ซ่อน key ที่ไม่ต้องการแสดง
+        .filter(([key]) => !["Selector", "Start"].includes(key))
+        .map(([key, value]) => (
+          <Card
+            key={key}
+            className={`transition-all duration-300 hover:scale-[1.02] ${
+              value
+                ? "border-green-500 shadow-green-200"
+                : "border-muted"
+            }`}
+          >
+            <CardContent className="p-4 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{key}</span>
 
-              <Power
-                className={`h-4 w-4 transition ${
+                <Power
+                  className={`h-4 w-4 transition ${
+                    value
+                      ? "text-green-500"
+                      : "text-muted-foreground"
+                  }`}
+                />
+              </div>
+
+              <Badge
+                className={`w-fit ${
                   value
-                    ? "text-green-500"
-                    : "text-muted-foreground"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-gray-400 hover:bg-gray-500"
                 }`}
-              />
-            </div>
-
-            <Badge
-              className={`w-fit ${
-                value
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-gray-400 hover:bg-gray-500"
-              }`}
-            >
-              {value ? "ON" : "OFF"}
-            </Badge>
-          </CardContent>
-        </Card>
-      ))}
+              >
+                {value ? "ON" : "OFF"}
+              </Badge>
+            </CardContent>
+          </Card>
+        ))}
     </div>
   );
 }

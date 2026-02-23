@@ -9,12 +9,18 @@ interface Props {
   dbConnected: boolean;
 }
 
-export default function WebsocketStatus({
-  connected,
-  dbConnected,
-}: Props) {
+export default function WebsocketStatus({ connected, dbConnected }: Props) {
   return (
-    <Card className="rounded-2xl shadow-sm border">
+    <Card
+      className="  bg-white/5
+                  border border-white/10
+                  backdrop-blur-lg
+                  rounded-2xl
+                  shadow-xl
+                  transition
+                  hover:border-zinc-400/40
+                  hover:shadow-zinc-500/10"
+    >
       <CardHeader className="pb-2">
         <CardTitle className="text-sm text-muted-foreground">
           System Status

@@ -23,8 +23,8 @@ export function ModeToggle() {
         setTheme(isDark ? "light" : "dark")
       }
       className={cn(
-        "relative flex items-center justify-center w-10 h-10 rounded-xl border transition-all duration-300",
-        "bg-background hover:scale-105 active:scale-95",
+        "relative flex items-center justify-center w-10 h-10 rounded-xl border border-white transition-all duration-300",
+        "hover:scale-105 active:scale-95",
         "shadow-sm hover:shadow-md"
       )}
     >
