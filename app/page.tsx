@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
               {/* ขวา */}
               <div className="md:col-span-2 p-6 bg-white/5 border border-white/10 backdrop-blur-lg rounded-2xl shadow-xl transition hover:border-zinc-400/40 hover:shadow-zinc-500/10">
-                <h1 className="text-lg font-semibold mb-6">Output Status</h1>
+                <h1 className="text-lg font-semibold mb-6 text-muted-foreground">Output Status</h1>
                 <MachineStatus machine={machineData?.machine} />
               </div>
             </div>

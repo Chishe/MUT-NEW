@@ -28,8 +28,22 @@ export default function SpeedCard({ value = 0 }: Props) {
 
       <CardContent>
         <p
-          className="text-4xl font-bold tracking-wide text-amber-600"
-          style={{ fontFamily: "var(--font-digital)" }}
+          className="text-4xl font-bold tracking-wide text-amber-300"
+          style={{
+            fontFamily: "var(--font-digital)",
+            textShadow: `
+      /* ขอบดำ */
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000,
+
+      /* glow */
+      0 0 6px #fbbf24,
+      0 0 12px #f59e0b,
+      0 0 24px #d97706
+    `,
+          }}
         >
           {value}
         </p>

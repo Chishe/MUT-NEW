@@ -3,7 +3,7 @@ import pool from "@/lib/db";
 
 export async function GET() {
   const result = await pool.query(
-    "SELECT * FROM machine_alarms ORDER BY created_at DESC"
+    "SELECT  id, title, message, is_read, created_at FROM machine_alarms ORDER BY created_at DESC"
   );
 
   const formatted = result.rows.map((row) => ({

@@ -9,7 +9,7 @@ export default function BlueprintBackground() {
         className="
           absolute inset-0
           bg-gradient-to-br
-          from-slate-100 via-white to-slate-200
+          from-slate-100 via-slate-200 to-slate-300
           dark:from-[#0f172a] dark:via-[#0b1e3a] dark:to-[#0a2540]
         "
       />

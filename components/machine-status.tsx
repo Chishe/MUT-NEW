@@ -4,11 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Power } from "lucide-react";
 
+export type MachineControl = Record<string, boolean>;
+
 interface Props {
-  machine?: { [key: string]: boolean };
+  machine?: MachineControl;
 }
 
-const DEFAULT_STATUS = {
+const DEFAULT_STATUS: MachineControl = {
   Selector: false,
   Start: false,
   "In-V": false,
@@ -23,47 +25,53 @@ const DEFAULT_STATUS = {
 };
 
 export default function MachineStatus({ machine }: Props) {
-  const status = { ...DEFAULT_STATUS, ...machine };
+  const status: MachineControl = {
+    ...DEFAULT_STATUS,
+    ...(machine ?? {}),
+  };
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {Object.entries(status)
-        // 🔥 ซ่อน key ที่ไม่ต้องการแสดง
-        .filter(([key]) => !["Selector", "Start"].includes(key))
-        .map(([key, value]) => (
-          <Card
-            key={key}
-            className={`transition-all duration-300 hover:scale-[1.02] ${
-              value
-                ? "border-green-500 shadow-green-200"
-                : "border-muted"
-            }`}
-          >
-            <CardContent className="p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{key}</span>
+      {Object.keys(status)
+        .filter((key) => key !== "Selector" && key !== "Start")
+        .map((key) => {
+          const value = status[key]; // boolean ชัดเจน
 
-                <Power
-                  className={`h-4 w-4 transition ${
+          return (
+            <Card
+              key={key}
+              className={`transition-all duration-300 hover:scale-[1.02] ${
+                value
+                  ? "border-green-500 shadow-green-200"
+                  : "border-muted"
+              }`}
+            >
+              <CardContent className="p-4 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{key}</span>
+
+                  <Power
+                    className={`h-4 w-4 transition ${
+                      value
+                        ? "text-green-500"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                </div>
+
+                <Badge
+                  className={`w-fit ${
                     value
-                      ? "text-green-500"
-                      : "text-muted-foreground"
+                      ? "bg-green-500 hover:bg-green-600"
+                      : "bg-gray-400 hover:bg-gray-500"
                   }`}
-                />
-              </div>
-
-              <Badge
-                className={`w-fit ${
-                  value
-                    ? "bg-green-500 hover:bg-green-600"
-                    : "bg-gray-400 hover:bg-gray-500"
-                }`}
-              >
-                {value ? "ON" : "OFF"}
-              </Badge>
-            </CardContent>
-          </Card>
-        ))}
+                >
+                  {value ? "ON" : "OFF"}
+                </Badge>
+              </CardContent>
+            </Card>
+          );
+        })}
     </div>
   );
 }

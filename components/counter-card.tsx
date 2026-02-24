@@ -28,8 +28,23 @@ export default function CounterCard({ value = 0 }: Props) {
 
       <CardContent>
         <p
-          className="text-4xl font-bold tracking-wide text-emerald-600"
-          style={{ fontFamily: "var(--font-digital)" }}
+          className="text-4xl font-bold tracking-wide text-emerald-300"
+          style={{
+            fontFamily: "var(--font-digital)",
+            textShadow: `
+      /* ขอบดำ */
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000,
+
+      /* Glow */
+      0 0 6px #34d399,
+      0 0 12px #10b981,
+      0 0 24px #059669,
+      0 0 48px #047857
+    `,
+          }}
         >
           {value.toLocaleString()}
         </p>

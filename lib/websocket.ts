@@ -1,58 +1,90 @@
 "use client";
 
+import type { WebSocketHandler } from "@/types/websocket";
+
 let socket: WebSocket | null = null;
-let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+let reconnectInterval: ReturnType<typeof setInterval> | null = null;
 
 const WS_URL =
-  process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:1880/ws";
+  process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:1880/mut";
 
-export function getWebSocket(
-  onMessage: (data: any) => void
-): WebSocket {
-
-  if (socket) {
-    socket.close();
+function stopReconnectLoop() {
+  if (reconnectInterval) {
+    clearInterval(reconnectInterval);
+    reconnectInterval = null;
   }
+}
 
-  console.log("Connecting to:", WS_URL);
+function startReconnectLoop<T>(
+  onMessage: WebSocketHandler<T>,
+  onStatusChange?: (connected: boolean) => void
+) {
+  if (reconnectInterval) return;
 
+  reconnectInterval = setInterval(() => {
+    if (!socket || socket.readyState === WebSocket.CLOSED) {
+      console.log("🔁 Trying to reconnect...");
+      connect(onMessage, onStatusChange);
+    }
+  }, 2000);
+}
+
+function connect<T>(
+  onMessage: WebSocketHandler<T>,
+  onStatusChange?: (connected: boolean) => void
+) {
   socket = new WebSocket(WS_URL);
 
   socket.onopen = () => {
     console.log("🟢 Connected");
+    onStatusChange?.(true);
+    stopReconnectLoop();
   };
 
-  socket.onmessage = (event) => {
+  socket.onmessage = (event: MessageEvent<string>) => {
     try {
-      const parsed = JSON.parse(event.data);
+      const parsed: T = JSON.parse(event.data);
       onMessage(parsed);
-    } catch (err) {
-      console.error("Invalid JSON:", err);
+    } catch (error) {
+      console.error("Invalid JSON:", error);
     }
   };
 
-  socket.onerror = (err) => {
-    console.error("⚠️ WS error:", err);
+  socket.onerror = () => {
+    console.log("⚠️ WebSocket error");
   };
 
-  socket.onclose = (e) => {
-    console.log("🔴 Closed:", e.code);
-
-    reconnectTimeout = setTimeout(() => {
-      getWebSocket(onMessage);
-    }, 2000);
+  socket.onclose = () => {
+    console.log("🔴 Disconnected");
+    onStatusChange?.(false);
+    socket = null;
+    startReconnectLoop(onMessage, onStatusChange);
   };
-
-  return socket;
 }
 
-export function closeWebSocket() {
-  if (reconnectTimeout) {
-    clearTimeout(reconnectTimeout);
+export function getWebSocket<T>(
+  onMessage: WebSocketHandler<T>,
+  onStatusChange?: (connected: boolean) => void
+): WebSocket {
+  if (
+    socket &&
+    (socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING)
+  ) {
+    return socket;
   }
+
+  connect(onMessage, onStatusChange);
+  startReconnectLoop(onMessage, onStatusChange);
+
+  return socket!;
+}
+
+export function closeWebSocket(): void {
+  stopReconnectLoop();
 
   if (socket) {
     socket.close();
     socket = null;
   }
-}
+} 

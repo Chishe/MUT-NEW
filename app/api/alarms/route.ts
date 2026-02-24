@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import type { Alarm } from "@/types/alarm";
 
-let latestAlarm: any = null;
+let latestAlarm: Alarm | null = null;
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  const body: Omit<Alarm, "timestamp"> = await req.json();
 
   latestAlarm = {
     ...body,
